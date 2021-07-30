@@ -7,14 +7,14 @@ using DMDatabase;
 
 namespace DMAssistant
 {
-    class Item : IDatabaseLinkable
+    class Currency : IDatabaseLinkable
     {
         public string name;
-        public CurrencyValue value;
+        public int amount;
 
         public IDatabaseLinker GetDatabaseLinker()
         {
-            throw new NotImplementedException();
+            return new CurrencyDatabaseLinker(this);
         }
     }
 }

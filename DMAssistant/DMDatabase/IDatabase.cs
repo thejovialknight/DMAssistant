@@ -9,6 +9,7 @@ namespace DMDatabase
     // The central database which deserializes to and from the file and hosts the reader of data.
     interface IDatabase
     {
-        
+        void SerializeToFile(string fName, IDatabaseLinkable data);
+        void DeserializeFromFile(string fName, IDatabaseLinkable data);
     }
 }

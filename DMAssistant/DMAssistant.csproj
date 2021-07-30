@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>DMAssistant</RootNamespace>
     <AssemblyName>DMAssistant</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -70,9 +71,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Currency.cs" />
+    <Compile Include="CurrencyDatabaseLinker.cs" />
+    <Compile Include="CurrencyValue.cs" />
+    <Compile Include="CurrencyValueDatabaseLinker.cs" />
+    <Compile Include="DMDatabase\DatabaseLinker.cs" />
     <Compile Include="DMDatabase\IDatabase.cs" />
+    <Compile Include="DMDatabase\IDatabaseLinkable.cs" />
+    <Compile Include="DMDatabase\IDatabaseLinker.cs" />
+    <Compile Include="DMDatabase\IDatabaseReader.cs" />
     <Compile Include="DMDatabase\JsonDatabase.cs" />
+    <Compile Include="DMDatabase\JsonDatabaseReader.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="ItemDatabaseLinker.cs" />
     <Compile Include="Persistence.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,6 +94,5 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

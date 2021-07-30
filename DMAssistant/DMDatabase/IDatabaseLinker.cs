@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMAssistant.DMDatabase
+namespace DMDatabase
 {
     // The interface for the go-between from the database to a piece of data.
     // There is a different interface for each type of data.
@@ -12,8 +12,13 @@ namespace DMAssistant.DMDatabase
     interface IDatabaseLinker
     {
         // Runs through each field, calls OnSerializeField to
-        void OnSerialize(IDatabaseObject obj);
+        // No OnSerializeField because the linker just has to call each single line in turn to the reader,
+        // no issue.
+        void Serialize(IDatabaseWriter writer);
+
+        void Deserialize(IDatabaseReader reader);
+        void OnSerialize(IDatabaseWriter writer);
         // 
-        bool OnSerializeField(IDatabaseObject obj);
+        void OnDeserializeField(IDatabaseReader reader);
     }
 }
