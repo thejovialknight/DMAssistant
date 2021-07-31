@@ -9,12 +9,19 @@ namespace DMAssistant
 {
     class Item : IDatabaseLinkable
     {
-        public string name;
-        public CurrencyValue value;
+        public string name = "Name not set";
+        public List<Currency> values = new List<Currency>();
 
-        public IDatabaseLinker GetDatabaseLinker()
+        public void OnDeserialize(IDatabaseReader reader)
         {
-            throw new NotImplementedException();
+            name = reader.DeserializeString("Name", name);
+            values = reader.DeserializeListLinkable("Values", values);
+        }
+
+        public void OnSerialize(IDatabaseWriter writer)
+        {
+            writer.SerializeString("Name", name);
+            writer.SerializeListLinkable("Values", values);
         }
     }
 }

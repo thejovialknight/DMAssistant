@@ -11,46 +11,36 @@ namespace DMDatabase
     // This class is a JSON implementation of IDatabase
     class JsonDatabase : IDatabase
     {
-        public void DeserializeFromFile(string fName, IDatabaseLinkable data)
+        public void SerializeToFile(string fName, IDatabaseLinkable data)
         {
-            var options = new JsonReaderOptions
+            // Declare the JsonWriterOptions
+            var options = new JsonWriterOptions
             {
-                AllowTrailingCommas = true,
-                CommentHandling = JsonCommentHandling.Skip
+                Indented = true
             };
 
-            Fi reader = new Utf8JsonReader(jsonUtf8Bytes, options);
+            // Write to memory stream
+            FileStream stream = new FileStream(fName, FileMode.Create);
+            Utf8JsonWriter writer = new Utf8JsonWriter(stream, options);
 
-            while (reader.Read())
-            {
-                Console.Write(reader.TokenType);
+            writer.WriteStartObject();
+            JsonDatabaseWriter dbWriter = new JsonDatabaseWriter(writer, data);
+            dbWriter.SerializeElement();
+            writer.WriteEndObject();
 
-                switch (reader.TokenType)
-                {
-                    case JsonTokenType.PropertyName:
-                    case JsonTokenType.String:
-                        {
-                            string text = reader.GetString();
-                            Console.Write(" ");
-                            Console.Write(text);
-                            break;
-                        }
+            writer.Flush();
 
-                    case JsonTokenType.Number:
-                        {
-                            int intValue = reader.GetInt32();
-                            Console.Write(" ");
-                            Console.Write(intValue);
-                            break;
-                        }
+            // Copy stream to file. Might want to just encode to string and write that?
+            // FileStream fileStream = new FileStream(fName, FileMode.Create);
+            // stream.CopyTo(fileStream);
+            // fileStream.Flush();
 
-                        // Other token types elided for brevity
-                }
-                Console.WriteLine();
-            }
+            // NOT REALLY NEEDED. Encode to string and write to console.
+            // string json = Encoding.UTF8.GetString(stream.ToArray());
+            // Console.WriteLine(json);
         }
 
-        public void SerializeToFile(string fName, IDatabaseLinkable data)
+        public void DeserializeFromFile(string fName, IDatabaseLinkable data)
         {
             if (!File.Exists(fName))
             {
@@ -58,17 +48,12 @@ namespace DMDatabase
                 return;
             }
 
-            JsonWriterOptions options = new JsonWriterOptions
+            using (JsonDocument document = JsonDocument.Parse(File.ReadAllText(fName)))
             {
-                Indented = true
-            };
-
-            FileStream stream = new FileStream(fName, FileMode.Open);
-            Utf8JsonWriter writer = new Utf8JsonWriter(stream, options);
-
-            JsonDatabaseReader reader = new JsonDatabaseReader(writer);
-            data = reader.SerializeLinkable("Root", data);
-            writer.Flush();
+                JsonElement root = document.RootElement;
+                JsonDatabaseReader dbReader = new JsonDatabaseReader(root, data);
+                dbReader.DeserializeElement();
+            }
         }
     }
 }

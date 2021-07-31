@@ -10,6 +10,7 @@ namespace DMDatabase
     // Only exists for retrieval of the IDatabaseLinker.
     interface IDatabaseLinkable
     {
-        IDatabaseLinker GetDatabaseLinker();
+        void OnSerialize(IDatabaseWriter writer);
+        void OnDeserialize(IDatabaseReader reader);
     }
 }

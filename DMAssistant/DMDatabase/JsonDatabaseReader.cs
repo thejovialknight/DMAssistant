@@ -4,43 +4,127 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DMDatabase
 {
+    // Using document, different reader for each element
     class JsonDatabaseReader : IDatabaseReader
     {
-        public T Deserialize<T>(string key, T cur)
+        JsonElement element;
+        IDatabaseLinkable linkable;
+
+        public JsonDatabaseReader(JsonElement element, IDatabaseLinkable linkable)
         {
-            while (reader.NextField())
+            this.element = element;
+            this.linkable = linkable;
+        }
+
+        public void DeserializeElement()
+        {
+            linkable.OnDeserialize(this);
+        }
+
+        public bool DeserializeBool(string key, bool def)
+        {
+            JsonElement field;
+            if(element.TryGetProperty(key, out field))
             {
-                OnDeserializeField(reader);
+                if (field.ValueKind == JsonValueKind.False)
+                    return false;
+                else if (field.ValueKind == JsonValueKind.True)
+                    return true;
             }
+
+            return def;
         }
 
-        public T DeserializeField<T>(string key, T cur)
+        public double DeserializeDouble(string key, double def)
         {
-            throw new NotImplementedException();
+            JsonElement field;
+            if (element.TryGetProperty(key, out field))
+            {
+                double value;
+                if (field.TryGetDouble(out value))
+                    return value;
+            }
+
+            return def;
         }
 
-        public T DeserializeLinkable<T>(string key, T cur) where T : IDatabaseLinkable, new()
+        public float DeserializeFloat(string key, float def)
         {
-            throw new NotImplementedException();
+            JsonElement field;
+            if (element.TryGetProperty(key, out field))
+            {
+                float value;
+                if (field.TryGetSingle(out value))
+                    return value;
+            }
+
+            return def;
         }
 
-        public List<T> DeserializeListField<T>(string key, List<T> list)
+        public int DeserializeInt(string key, int def)
         {
-            throw new NotImplementedException();
+            JsonElement field;
+            if (element.TryGetProperty(key, out field))
+            {
+                int value;
+                if (field.TryGetInt32(out value))
+                    return value;
+            }
+
+            return def;
         }
 
-        // might not need these generics at all. kind of just need to parse through it don't we
-        public List<T> DeserializeListLinkable<T>(string key, string listKey, List<T> list) where T : IDatabaseLinkable, new()
+        public string DeserializeString(string key, string def)
         {
-            throw new NotImplementedException();
+            JsonElement field;
+            if (element.TryGetProperty(key, out field))
+            {
+                if (field.ValueKind == JsonValueKind.String)
+                    return field.GetString();
+            }
+
+            return def;
         }
 
-        public bool NextField()
+        public T DeserializeLinkable<T>(string key, T current) where T : IDatabaseLinkable, new()
         {
-            throw new NotImplementedException();
+            JsonElement newElement;
+            if(element.TryGetProperty(key, out newElement))
+            {
+                JsonDatabaseReader reader = new JsonDatabaseReader(newElement, current);
+                reader.DeserializeElement();
+            }
+
+            return current;
+        }
+
+        public List<T> DeserializeListLinkable<T>(string key, List<T> list) where T : IDatabaseLinkable, new()
+        {
+            JsonElement listElement;
+            if(element.TryGetProperty(key, out listElement))
+            {
+                if(listElement.ValueKind == JsonValueKind.Array)
+                {
+                    List<T> newList = new List<T>();
+                    JsonElement.ArrayEnumerator enumerator = listElement.EnumerateArray();
+                    foreach(JsonElement arrayElement in enumerator)
+                    {
+                        T newObject = new T();
+                        newList.Add(newObject);
+
+                        JsonDatabaseReader reader = new JsonDatabaseReader(arrayElement, newObject);
+                        reader.DeserializeElement();
+                    }
+
+                    return newList;
+                }
+            }
+
+            return list;
         }
     }
 }

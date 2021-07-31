@@ -9,7 +9,12 @@ namespace DMAssistant
 {
     class World : IDatabaseLinkable
     {
-        public IDatabaseLinker GetDatabaseLinker()
+        public void OnDeserialize(IDatabaseReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnSerialize(IDatabaseWriter writer)
         {
             throw new NotImplementedException();
         }

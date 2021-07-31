@@ -9,12 +9,19 @@ namespace DMAssistant
 {
     class Currency : IDatabaseLinkable
     {
-        public string name;
-        public int amount;
+        public string name = "Currency Name Here";
+        public int amount = 0;
 
-        public IDatabaseLinker GetDatabaseLinker()
+        public void OnDeserialize(IDatabaseReader reader)
         {
-            return new CurrencyDatabaseLinker(this);
+            name = reader.DeserializeString("Name", name);
+            amount = reader.DeserializeInt("Amount", amount);
+        }
+
+        public void OnSerialize(IDatabaseWriter writer)
+        {
+            writer.SerializeString("Name", name);
+            writer.SerializeInt("Amount", amount);
         }
     }
 }

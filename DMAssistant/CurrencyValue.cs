@@ -10,11 +10,18 @@ namespace DMAssistant
     // This data class represents a monetary value as a list of currencies with names and amounts.
     class CurrencyValue : IDatabaseLinkable
     {
-        public List<Currency> currencies = new List<Currency>();
+        // copmmented to make serialization easier
+        //public List<Currency> currencies = new List<Currency>();
+        public Currency currency = new Currency();
 
-        public IDatabaseLinker GetDatabaseLinker()
+        public void OnDeserialize(IDatabaseReader reader)
         {
-            return new CurrencyValueDatabaseLinker(this);
+            currency = reader.DeserializeLinkable("Currency", currency);
+        }
+
+        public void OnSerialize(IDatabaseWriter writer)
+        {
+            writer.SerializeLinkable("Currency", currency);
         }
     }
 }
