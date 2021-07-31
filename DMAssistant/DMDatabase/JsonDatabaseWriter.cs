@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace DMDatabase
 {
-    class JsonDatabaseWriter : IDatabaseWriter
+    class JsonDatabaseWriter : IDatabaseLinker
     {
         Utf8JsonWriter writer;
         IDatabaseLinkable linkable;
@@ -21,35 +21,40 @@ namespace DMDatabase
 
         public void SerializeElement()
         {
-            linkable.OnSerialize(this);
+            linkable.OnLink(this);
         }
 
-        public void SerializeBool(string key, bool value)
+        public bool LinkBool(string key, bool value)
         {
             writer.WriteBoolean(key, value);
+            return value;
         }
 
-        public void SerializeDouble(string key, double value)
+        public double LinkDouble(string key, double value)
         {
             writer.WriteNumber(key, value);
+            return value;
         }
 
-        public void SerializeFloat(string key, float value)
+        public float LinkFloat(string key, float value)
         {
             writer.WriteNumber(key, value);
+            return value;
         }
 
-        public void SerializeInt(string key, int value)
+        public int LinkInt(string key, int value)
         {
             writer.WriteNumber(key, value);
+            return value;
         }
 
-        public void SerializeString(string key, string value)
+        public string LinkString(string key, string value)
         {
             writer.WriteString(key, value);
+            return value;
         }
 
-        public void SerializeLinkable<T>(string key, T value) where T : IDatabaseLinkable, new()
+        public T LinkObject<T>(string key, T value) where T : IDatabaseLinkable, new()
         {
             writer.WriteStartObject(key);
 
@@ -57,13 +62,15 @@ namespace DMDatabase
             databaseWriter.SerializeElement();
 
             writer.WriteEndObject();
+
+            return value;
         }
 
-        public void SerializeListLinkable<T>(string key, List<T> list) where T : IDatabaseLinkable, new()
+        public List<T> LinkObjectList<T>(string key, List<T> value) where T : IDatabaseLinkable, new()
         {
             writer.WriteStartArray(key);
 
-            foreach(T obj in list)
+            foreach(T obj in value)
             {
                 // redundant code. can fix with a touch of time. don't really care.
                 writer.WriteStartObject();
@@ -75,6 +82,78 @@ namespace DMDatabase
             }
 
             writer.WriteEndArray();
+
+            return value;
+        }
+
+        public List<string> LinkStringList(string key, List<string> value)
+        {
+            writer.WriteStartArray(key);
+
+            foreach (string i in value)
+            {
+                writer.WriteStringValue(i);
+            }
+
+            writer.WriteEndArray();
+
+            return value;
+        }
+
+        public List<bool> LinkBoolList(string key, List<bool> value)
+        {
+            writer.WriteStartArray(key);
+
+            foreach (bool i in value)
+            {
+                writer.WriteBooleanValue(i);
+            }
+
+            writer.WriteEndArray();
+
+            return value;
+        }
+
+        public List<int> LinkIntList(string key, List<int> value)
+        {
+            writer.WriteStartArray(key);
+
+            foreach (int i in value)
+            {
+                writer.WriteNumberValue(i);
+            }
+
+            writer.WriteEndArray();
+
+            return value;
+        }
+
+        public List<double> LinkDoubleList(string key, List<double> value)
+        {
+            writer.WriteStartArray(key);
+
+            foreach (double i in value)
+            {
+                writer.WriteNumberValue(i);
+            }
+
+            writer.WriteEndArray();
+
+            return value;
+        }
+
+        public List<float> LinkFloatList(string key, List<float> value)
+        {
+            writer.WriteStartArray(key);
+
+            foreach (float i in value)
+            {
+                writer.WriteNumberValue(i);
+            }
+
+            writer.WriteEndArray();
+
+            return value;
         }
     }
 }

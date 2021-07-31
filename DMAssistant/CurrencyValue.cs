@@ -14,14 +14,9 @@ namespace DMAssistant
         //public List<Currency> currencies = new List<Currency>();
         public Currency currency = new Currency();
 
-        public void OnDeserialize(IDatabaseReader reader)
+        public void OnLink(IDatabaseLinker linker)
         {
-            currency = reader.DeserializeLinkable("Currency", currency);
-        }
-
-        public void OnSerialize(IDatabaseWriter writer)
-        {
-            writer.SerializeLinkable("Currency", currency);
+            currency = linker.LinkObject("Currency", currency);
         }
     }
 }

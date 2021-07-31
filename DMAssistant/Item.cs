@@ -12,16 +12,10 @@ namespace DMAssistant
         public string name = "Name not set";
         public List<Currency> values = new List<Currency>();
 
-        public void OnDeserialize(IDatabaseReader reader)
+        public void OnLink(IDatabaseLinker linker)
         {
-            name = reader.DeserializeString("Name", name);
-            values = reader.DeserializeListLinkable("Values", values);
-        }
-
-        public void OnSerialize(IDatabaseWriter writer)
-        {
-            writer.SerializeString("Name", name);
-            writer.SerializeListLinkable("Values", values);
+            name = linker.LinkString("Name", name);
+            values = linker.LinkObjectList("Values", values);
         }
     }
 }

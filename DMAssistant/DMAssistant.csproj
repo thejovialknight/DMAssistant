@@ -75,11 +75,10 @@
     <Compile Include="CurrencyValue.cs" />
     <Compile Include="DMDatabase\IDatabase.cs" />
     <Compile Include="DMDatabase\IDatabaseLinkable.cs" />
-    <Compile Include="DMDatabase\IDatabaseWriter.cs" />
-    <Compile Include="DMDatabase\IDatabaseReader.cs" />
     <Compile Include="DMDatabase\JsonDatabase.cs" />
     <Compile Include="DMDatabase\JsonDatabaseReader.cs" />
     <Compile Include="DMDatabase\JsonDatabaseWriter.cs" />
+    <Compile Include="DMDatabase\IDatabaseLinker.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Persistence.cs" />
     <Compile Include="Program.cs" />

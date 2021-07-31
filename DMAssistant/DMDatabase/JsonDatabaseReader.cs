@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 namespace DMDatabase
 {
     // Using document, different reader for each element
-    class JsonDatabaseReader : IDatabaseReader
+    class JsonDatabaseReader : IDatabaseLinker
     {
         JsonElement element;
         IDatabaseLinkable linkable;
@@ -22,10 +22,10 @@ namespace DMDatabase
 
         public void DeserializeElement()
         {
-            linkable.OnDeserialize(this);
+            linkable.OnLink(this);
         }
 
-        public bool DeserializeBool(string key, bool def)
+        public bool LinkBool(string key, bool def)
         {
             JsonElement field;
             if(element.TryGetProperty(key, out field))
@@ -39,7 +39,7 @@ namespace DMDatabase
             return def;
         }
 
-        public double DeserializeDouble(string key, double def)
+        public double LinkDouble(string key, double def)
         {
             JsonElement field;
             if (element.TryGetProperty(key, out field))
@@ -52,7 +52,7 @@ namespace DMDatabase
             return def;
         }
 
-        public float DeserializeFloat(string key, float def)
+        public float LinkFloat(string key, float def)
         {
             JsonElement field;
             if (element.TryGetProperty(key, out field))
@@ -65,7 +65,7 @@ namespace DMDatabase
             return def;
         }
 
-        public int DeserializeInt(string key, int def)
+        public int LinkInt(string key, int def)
         {
             JsonElement field;
             if (element.TryGetProperty(key, out field))
@@ -78,7 +78,7 @@ namespace DMDatabase
             return def;
         }
 
-        public string DeserializeString(string key, string def)
+        public string LinkString(string key, string def)
         {
             JsonElement field;
             if (element.TryGetProperty(key, out field))
@@ -90,7 +90,7 @@ namespace DMDatabase
             return def;
         }
 
-        public T DeserializeLinkable<T>(string key, T current) where T : IDatabaseLinkable, new()
+        public T LinkObject<T>(string key, T current) where T : IDatabaseLinkable, new()
         {
             JsonElement newElement;
             if(element.TryGetProperty(key, out newElement))
@@ -102,7 +102,7 @@ namespace DMDatabase
             return current;
         }
 
-        public List<T> DeserializeListLinkable<T>(string key, List<T> list) where T : IDatabaseLinkable, new()
+        public List<T> LinkObjectList<T>(string key, List<T> value) where T : IDatabaseLinkable, new()
         {
             JsonElement listElement;
             if(element.TryGetProperty(key, out listElement))
@@ -124,7 +124,116 @@ namespace DMDatabase
                 }
             }
 
-            return list;
+            return value;
+        }
+
+        // PRIMITIVE LIST GETTERS.
+        // TODO: USE TryGetString() in an if statement before adding it to the list.
+        // Don't want to be getting bad data!!
+
+        public List<string> LinkStringList(string key, List<string> value)
+        {
+            JsonElement listElement;
+            if (element.TryGetProperty(key, out listElement))
+            {
+                if (listElement.ValueKind == JsonValueKind.Array)
+                {
+                    List<string> newList = new List<string>();
+                    JsonElement.ArrayEnumerator enumerator = listElement.EnumerateArray();
+                    foreach (JsonElement arrayElement in enumerator)
+                    {
+                        newList.Add(arrayElement.GetString());
+                    }
+
+                    return newList;
+                }
+            }
+
+            return value;
+        }
+
+        public List<bool> LinkBoolList(string key, List<bool> value)
+        {
+            JsonElement listElement;
+            if (element.TryGetProperty(key, out listElement))
+            {
+                if (listElement.ValueKind == JsonValueKind.Array)
+                {
+                    List<bool> newList = new List<bool>();
+                    JsonElement.ArrayEnumerator enumerator = listElement.EnumerateArray();
+                    foreach (JsonElement arrayElement in enumerator)
+                    {
+                        newList.Add(arrayElement.GetBoolean());
+                    }
+
+                    return newList;
+                }
+            }
+
+            return value;
+        }
+
+        public List<int> LinkIntList(string key, List<int> value)
+        {
+            JsonElement listElement;
+            if (element.TryGetProperty(key, out listElement))
+            {
+                if (listElement.ValueKind == JsonValueKind.Array)
+                {
+                    List<int> newList = new List<int>();
+                    JsonElement.ArrayEnumerator enumerator = listElement.EnumerateArray();
+                    foreach (JsonElement arrayElement in enumerator)
+                    {
+                        newList.Add(arrayElement.GetInt32());
+                    }
+
+                    return newList;
+                }
+            }
+
+            return value;
+        }
+
+        public List<double> LinkDoubleList(string key, List<double> value)
+        {
+            JsonElement listElement;
+            if (element.TryGetProperty(key, out listElement))
+            {
+                if (listElement.ValueKind == JsonValueKind.Array)
+                {
+                    List<double> newList = new List<double>();
+                    JsonElement.ArrayEnumerator enumerator = listElement.EnumerateArray();
+                    foreach (JsonElement arrayElement in enumerator)
+                    {
+                        newList.Add(arrayElement.GetDouble());
+                    }
+
+                    return newList;
+                }
+            }
+
+            return value;
+        }
+
+        public List<float> LinkFloatList(string key, List<float> value)
+        {
+            JsonElement listElement;
+            if (element.TryGetProperty(key, out listElement))
+            {
+                if (listElement.ValueKind == JsonValueKind.Array)
+                {
+                    List<float> newList = new List<float>();
+                    JsonElement.ArrayEnumerator enumerator = listElement.EnumerateArray();
+                    foreach (JsonElement arrayElement in enumerator)
+                    {
+                        newList.Add(arrayElement.GetSingle());
+                    }
+
+                    return newList;
+                }
+            }
+
+            return value;
         }
     }
 }

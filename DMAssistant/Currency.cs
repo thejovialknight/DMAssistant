@@ -12,16 +12,10 @@ namespace DMAssistant
         public string name = "Currency Name Here";
         public int amount = 0;
 
-        public void OnDeserialize(IDatabaseReader reader)
+        public void OnLink(IDatabaseLinker linker)
         {
-            name = reader.DeserializeString("Name", name);
-            amount = reader.DeserializeInt("Amount", amount);
-        }
-
-        public void OnSerialize(IDatabaseWriter writer)
-        {
-            writer.SerializeString("Name", name);
-            writer.SerializeInt("Amount", amount);
+            name = linker.LinkString("Name", name);
+            amount = linker.LinkInt("Amount", amount);
         }
     }
 }
