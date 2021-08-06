@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 
-namespace DMDatabase
+namespace DMEngine.Database
 {
     // This class is a JSON implementation of IDatabase
-    class JsonDatabase : IDatabase
+    public class JsonDatabase : IDatabase
     {
-        public void SerializeToFile(string fName, IDatabaseLinkable data)
+        public void SerializeToFile(string fName, IDataLinkable data)
         {
             // Declare the JsonWriterOptions
             var options = new JsonWriterOptions
@@ -40,7 +40,7 @@ namespace DMDatabase
             // Console.WriteLine(json);
         }
 
-        public void DeserializeFromFile(string fName, IDatabaseLinkable data)
+        public void DeserializeFromFile(string fName, IDataLinkable data)
         {
             if (!File.Exists(fName))
             {

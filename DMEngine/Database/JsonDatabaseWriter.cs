@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DMDatabase;
 using System.Text.Json;
 
-namespace DMDatabase
+namespace DMEngine.Database
 {
-    class JsonDatabaseWriter : IDatabaseLinker
+    public class JsonDatabaseWriter : IDataLinker
     {
         Utf8JsonWriter writer;
-        IDatabaseLinkable linkable;
+        IDataLinkable linkable;
 
-        public JsonDatabaseWriter(Utf8JsonWriter writer, IDatabaseLinkable linkable)
+        public JsonDatabaseWriter(Utf8JsonWriter writer, IDataLinkable linkable)
         {
             this.writer = writer;
             this.linkable = linkable;
@@ -54,7 +53,7 @@ namespace DMDatabase
             return value;
         }
 
-        public T LinkObject<T>(string key, T value) where T : IDatabaseLinkable, new()
+        public T LinkObject<T>(string key, T value) where T : IDataLinkable, new()
         {
             writer.WriteStartObject(key);
 
@@ -66,7 +65,7 @@ namespace DMDatabase
             return value;
         }
 
-        public List<T> LinkObjectList<T>(string key, List<T> value) where T : IDatabaseLinkable, new()
+        public List<T> LinkObjectList<T>(string key, List<T> value) where T : IDataLinkable, new()
         {
             writer.WriteStartArray(key);
 

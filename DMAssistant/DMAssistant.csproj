@@ -73,22 +73,20 @@
   <ItemGroup>
     <Compile Include="Currency.cs" />
     <Compile Include="CurrencyValue.cs" />
-    <Compile Include="DMDatabase\IDatabase.cs" />
-    <Compile Include="DMDatabase\IDatabaseLinkable.cs" />
-    <Compile Include="DMDatabase\JsonDatabase.cs" />
-    <Compile Include="DMDatabase\JsonDatabaseReader.cs" />
-    <Compile Include="DMDatabase\JsonDatabaseWriter.cs" />
-    <Compile Include="DMDatabase\IDatabaseLinker.cs" />
+    <Compile Include="DungeonAssistant.cs" />
     <Compile Include="Item.cs" />
-    <Compile Include="Persistence.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Templates.cs" />
-    <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DMEngine\DMEngine.csproj">
+      <Project>{f3434bc5-300a-467c-b7bd-60f47bea94ae}</Project>
+      <Name>DMEngine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DMDatabase
+namespace DMEngine.Database
 {
     // Using document, different reader for each element
-    class JsonDatabaseReader : IDatabaseLinker
+    public class JsonDatabaseReader : IDataLinker
     {
         JsonElement element;
-        IDatabaseLinkable linkable;
+        IDataLinkable linkable;
 
-        public JsonDatabaseReader(JsonElement element, IDatabaseLinkable linkable)
+        public JsonDatabaseReader(JsonElement element, IDataLinkable linkable)
         {
             this.element = element;
             this.linkable = linkable;
@@ -90,7 +90,7 @@ namespace DMDatabase
             return def;
         }
 
-        public T LinkObject<T>(string key, T current) where T : IDatabaseLinkable, new()
+        public T LinkObject<T>(string key, T current) where T : IDataLinkable, new()
         {
             JsonElement newElement;
             if(element.TryGetProperty(key, out newElement))
@@ -102,7 +102,7 @@ namespace DMDatabase
             return current;
         }
 
-        public List<T> LinkObjectList<T>(string key, List<T> value) where T : IDatabaseLinkable, new()
+        public List<T> LinkObjectList<T>(string key, List<T> value) where T : IDataLinkable, new()
         {
             JsonElement listElement;
             if(element.TryGetProperty(key, out listElement))

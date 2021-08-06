@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMAssistant
+namespace DMEngine.Time
 {
-    class Templates
+    public interface ITickable
     {
-
+        void Tick(double deltaTime);
     }
 }
