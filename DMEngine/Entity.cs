@@ -17,36 +17,50 @@ namespace DMEngine
         // Each component in an entity must have an AddComponent call OnGameStart
         List<Component> components = new List<Component>();
 
-        // Runs whether the scene is open or not
-        public void OnGameStart()
+        #region Behaviors
+        public virtual void OnInitialize() { }
+        public void Initialize()
         {
-            foreach(Component component in components)
-            {
-                component.OnGameStart();
-            }
+            OnInitialize();
         }
 
-        public void OnStart(double deltaTime)
+        public virtual void OnPostInitialize() { }
+        public void PostInitialize()
         {
+            OnPostInitialize();
+
             foreach (Component component in components)
             {
-                component.OnStart(deltaTime);
+                component.PostInitialize();
             }
         }
 
-        public void OnTick(double deltaTime)
+        public virtual void OnTick(double deltaTime) { }
+        public void Tick(double deltaTime)
         {
             foreach (Component component in components)
             {
                 component.OnTick(deltaTime);
             }
+
+            OnTick(deltaTime);
         }
 
-        public void OnDestroy(double deltaTime)
+        public virtual void OnLink(IDataLinker linker) { }
+        public void Link(IDataLinker linker)
+        {
+            name = linker.LinkString("Name", name);
+
+            OnLink(linker);
+        }
+        #endregion
+
+        public virtual void OnDestroy() { }
+        public void Destroy()
         {
             foreach (Component component in components)
             {
-                component.OnDestroy(deltaTime);
+                component.Destroy();
             }
         }
 
@@ -71,18 +85,19 @@ namespace DMEngine
         // Must use this on GameStart if you want it to be on entity by default.
         // Keep private because this should only be used by the entity itself.
         // No adding components dynamically!
-        T AddComponent<T>() where T : Component, new()
+        public T AddComponent<T>() where T : Component, new()
         {
             T component = new T();
-            component.entity = this;
-            components.Add(component);
-            return component;
+            return AddComponent(component);
         }
 
-        // Base must be called to link name! (maybe add tags eventually?)
-        public void OnLink(IDataLinker linker)
+        public T AddComponent<T>(T component) where T : Component
         {
-            name = linker.LinkString("Name", name);
+            component.entity = this;
+            components.Add(component);
+
+            component.Initialize();
+            return component;
         }
     }
 }

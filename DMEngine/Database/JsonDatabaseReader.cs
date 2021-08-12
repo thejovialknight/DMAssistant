@@ -22,7 +22,7 @@ namespace DMEngine.Database
 
         public void DeserializeElement()
         {
-            linkable.OnLink(this);
+            linkable.Link(this);
         }
 
         public bool LinkBool(string key, bool def)

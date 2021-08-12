@@ -8,6 +8,6 @@ namespace DMEngine.Time
 {
     public interface ITickable
     {
-        void Tick(double deltaTime);
+        void OnTick(double deltaTime);
     }
 }

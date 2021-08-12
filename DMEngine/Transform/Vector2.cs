@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DMEngine.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DMEngine.Transform
 {
-    public class Vector2
+    public class Vector2 : IDataLinkable
     {
         public int x = 0;
         public int y = 0;
@@ -20,6 +21,12 @@ namespace DMEngine.Transform
         {
             this.x = x;
             this.y = y;
+        }
+
+        public void Link(IDataLinker linker)
+        {
+            x = linker.LinkInt("X", x);
+            y = linker.LinkInt("Y", y);
         }
 
         public static Vector2 operator +(Vector2 a, Vector2 b)

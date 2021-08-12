@@ -7,7 +7,7 @@ using DMEngine;
 using DMEngine.Database;
 using DMEngine.Time;
 
-namespace DMAssistant
+namespace DungeonAssistant
 {
     class Program
     {
@@ -15,12 +15,12 @@ namespace DMAssistant
         {
             JsonDatabase database = new JsonDatabase();
 
-            DungeonAssistant game = new DungeonAssistant();
+            DMGame game = new DMGame();
             game.SetDatabase(database, "Data.json");
 
             Time time = new Time();
 
-            game.OnGameStart();
+            game.Initialize();
             while(true)
             {
                 game.Tick(time.GetDeltaTime());

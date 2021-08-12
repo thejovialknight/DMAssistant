@@ -10,6 +10,6 @@ namespace DMEngine.Database
     // Only exists for retrieval of the IDataLinker.
     public interface IDataLinkable
     {
-        void OnLink(IDataLinker linker);
+        void Link(IDataLinker linker);
     }
 }

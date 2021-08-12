@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DMEngine;
+using DMEngine.CharacterMapRenderer;
+using DMEngine.Database;
 
-namespace DMAssistant
+namespace DungeonAssistant
 {
-    class DungeonAssistant : Game
+    class TextBox : Component
     {
+        public CharacterMap map;
     }
 }

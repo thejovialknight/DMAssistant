@@ -20,7 +20,7 @@ namespace DMEngine.Database
 
         public void SerializeElement()
         {
-            linkable.OnLink(this);
+            linkable.Link(this);
         }
 
         public bool LinkBool(string key, bool value)

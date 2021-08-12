@@ -23,6 +23,17 @@ namespace DMEngine
             databaseFilename = filename;
         }
 
+        // Must be added similar to AddComponent<> being required for Entities on OnGameStart
+        public T AddGraph<T>() where T : EntityGraph, new()
+        {
+            T graph = new T();
+            graph.game = this;
+            graphs.Add(graph);
+
+            graph.Initialize();
+            return graph;
+        }
+
         public void Serialize()
         {
             database.SerializeToFile(databaseFilename, this);
@@ -31,14 +42,6 @@ namespace DMEngine
         public void Deserialize()
         {
             database.DeserializeFromFile(databaseFilename, this);
-        }
-
-        public void OnGameStart()
-        {
-            foreach(EntityGraph graph in graphs)
-            {
-                graph.OnGameStart();
-            }
         }
 
         public EntityGraph OpenScene(EntityGraph graph)
@@ -53,17 +56,59 @@ namespace DMEngine
             return graph;
         }
 
-        public void OnLink(IDataLinker linker)
+        public virtual void OnInitialize() { }
+        public void Initialize()
         {
-
+            OnInitialize();
+            PostInitialize();
         }
 
+        public virtual void OnPostInitialize() { }
+        public void PostInitialize()
+        {
+            OnPostInitialize();
+
+            foreach(EntityGraph graph in graphs)
+            {
+                graph.PostInitialize();
+            }
+        }
+
+        public virtual void OnLink(IDataLinker linker) { }
+        public void Link(IDataLinker linker)
+        {
+            OnLink(linker);
+        }
+
+        public virtual void OnTick(double deltaTime) { }
         public void Tick(double deltaTime)
         {
             foreach(EntityGraph graph in graphs)
             {
                 graph.Tick(deltaTime);
             }
+
+            OnTick(deltaTime);
         }
+
+        #region Events
+
+        public delegate void OnEntityCreated(Entity entity, EntityGraph graph);
+        public event OnEntityCreated onEntityCreated;
+
+        public void RaiseOnEntityCreated(Entity entity, EntityGraph graph)
+        {
+            onEntityCreated?.Invoke(entity, graph);
+        }
+
+        public delegate void OnEntityDestroyed(Entity entity, EntityGraph graph);
+        public event OnEntityDestroyed onEntityDestroyed;
+
+        public void RaiseOnEntityDestroyed(Entity entity, EntityGraph graph)
+        {
+            onEntityCreated?.Invoke(entity, graph);
+        }
+
+        #endregion
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DMEngine.Database;
 
-namespace DMAssistant
+namespace DungeonAssistant
 {
     // This data class represents a monetary value as a list of currencies with names and amounts.
     class CurrencyValue : IDataLinkable
@@ -14,7 +14,7 @@ namespace DMAssistant
         //public List<Currency> currencies = new List<Currency>();
         public Currency currency = new Currency();
 
-        public void OnLink(IDataLinker linker)
+        public void Link(IDataLinker linker)
         {
             currency = linker.LinkObject("Currency", currency);
         }

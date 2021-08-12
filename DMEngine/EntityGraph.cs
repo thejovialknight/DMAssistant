@@ -12,30 +12,75 @@ namespace DMEngine
         public string name = "MySceneName";
         public bool isOpen = false;
         List<Entity> entities = new List<Entity>();
+        public Game game;
 
-        public void OnGameStart()
+        #region Behaviors
+        public virtual void OnInitialize() { }
+        public void Initialize ()
         {
-            foreach(Entity entity in entities)
+            OnInitialize();
+        }
+
+        public virtual void OnPostInitialize() { }
+        public void PostInitialize()
+        {
+            OnPostInitialize();
+
+            foreach (Entity entity in entities)
             {
-                entity.OnGameStart();
+                entity.PostInitialize();
             }
         }
 
+        public virtual void OnTick(double deltaTime) { }
+        public void Tick(double deltaTime)
+        {
+            OnTick(deltaTime);
+
+            foreach (Entity entity in entities)
+            {
+                entity.OnTick(deltaTime);
+            }
+        }
+
+        public virtual void OnLink(IDataLinker linker) { }
+        public void Link(IDataLinker linker)
+        {
+            name = linker.LinkString("Name", name);
+            isOpen = linker.LinkBool("IsOpen", isOpen);
+
+            OnLink(linker);
+        }
+        #endregion
+
         // Must be added similar to AddComponent<> being required for Entities on OnGameStart
-        public T AddEntity<T>() where T : Entity, new()
+        public T CreateEntity<T>() where T : Entity, new()
         {
             T entity = new T();
             entity.graph = this;
             entities.Add(entity);
+
+            entity.Initialize();
+            RaiseOnEntityCreated(entity);
             return entity;
         }
 
-        public void Tick(double deltaTime)
+        public T Entity<T>() where T : Entity
         {
-            foreach(Entity entity in entities)
+            T toReturn = null;
+            foreach (var entity in entities)
             {
-                entity.OnTick(deltaTime);
+                try
+                {
+                    var s = (T)entity;
+                    toReturn = s;
+                }
+                catch (InvalidCastException)
+                {
+                    continue;
+                }
             }
+            return toReturn;
         }
 
         // Returns the component T from every entity that has one
@@ -55,11 +100,25 @@ namespace DMEngine
             return components.ToArray();
         }
 
-        public void OnLink(IDataLinker linker)
+        #region Events
+
+        public delegate void OnEntityCreated(Entity entity);
+        public event OnEntityCreated onEntityCreated;
+
+        public void RaiseOnEntityCreated(Entity entity)
         {
-            name = linker.LinkString("Name", name);
-            isOpen = linker.LinkBool("IsOpen", isOpen);
-            entities = linker.LinkObjectList("Entities", entities);
+            onEntityCreated?.Invoke(entity);
+            game.RaiseOnEntityCreated(entity, this);
         }
+
+        public delegate void OnEntityDestroyed(Entity entity);
+        public event OnEntityDestroyed onEntityDestroyed;
+
+        public void RaiseOnEntityDestroyed(Entity entity)
+        {
+            onEntityCreated?.Invoke(entity);
+        }
+
+        #endregion
     }
 }
