@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DMEngine
 {
-    public class EntityGraph : IDataLinkable
+    public partial class EntityGraph : IDataLinkable
     {
         public string name = "MySceneName";
         public bool isOpen = false;
@@ -57,6 +57,11 @@ namespace DMEngine
         public T CreateEntity<T>() where T : Entity, new()
         {
             T entity = new T();
+            return CreateEntity(entity);
+        }
+
+        public T CreateEntity<T>(T entity) where T : Entity, new()
+        {
             entity.graph = this;
             entities.Add(entity);
 

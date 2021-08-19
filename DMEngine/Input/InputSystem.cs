@@ -40,7 +40,7 @@ namespace DMEngine.Input
             if (Console.KeyAvailable == true) {
                 foreach (InputAcceptor inputAcceptor in inputAcceptors)
                 {
-                    inputAcceptor.RaiseOnKey(Console.ReadKey());
+                    inputAcceptor.RaiseOnKey(Console.ReadKey(true));
                 }
             }
         }

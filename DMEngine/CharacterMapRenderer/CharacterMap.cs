@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DMEngine.Database;
-using DMEngine.Transform;
+using DMEngine.CharacterTransform;
 
 namespace DMEngine.CharacterMapRenderer
 {
@@ -12,8 +12,8 @@ namespace DMEngine.CharacterMapRenderer
     public class CharacterMap : Component
     {
         public RectTransform transform;
-        public Character[][] coordinates;
-        public List<CharacterDifference> differences = new List<CharacterDifference>();
+        public List<MapCharacter> mapCharacters = new List<MapCharacter>();
+        public Vector2 printPosition = new Vector2();
         public bool isSizeOrPositionDifferent = true;
 
         Vector2 previousGlobalPosition;
@@ -30,47 +30,52 @@ namespace DMEngine.CharacterMapRenderer
 
         public void ClearDifferences()
         {
-            differences.Clear();
+            mapCharacters.Clear();
+        }
+
+        public void SetPrintPosition(Vector2 pos)
+        {
+            printPosition = pos;
         }
 
         public void Print(Character character, Vector2 position)
         {
-            //if(coordinates[position.x][position.y].character != character.character)
-            //{
-                coordinates[position.x][position.y] = character;
-                differences.Add(new CharacterDifference(character, position));
-            //}
+            if(CheckWithinBounds(position))
+            {
+                foreach (MapCharacter mapCharacter in mapCharacters)
+                {
+                    if(mapCharacter.position == position)
+                    {
+                        mapCharacter.oldCharacter = mapCharacter.newCharacter;
+                        mapCharacter.newCharacter = character;
+                        return;
+                    }
+                }
+
+                mapCharacters.Add(new MapCharacter(null, character, position));
+            }
+        }
+
+        public bool CheckWithinBounds(Vector2 position)
+        {
+            return (transform.Size().x > position.x && transform.Size().y > position.y && position.x >= 0 && position.y >= 0);
+        }
+
+        public void Print(Character character)
+        {
+            Print(character, printPosition);
         }
 
         public override void OnInitialize()
         {
-            transform = entity.Component<RectTransform>();
-
-            if(transform != null)
-            {
-                coordinates = new Character[transform.rect.size.x][];
-                for(int x = 0; x < coordinates.GetLength(0); x++)
-                {
-                    coordinates[x] = new Character[transform.rect.size.y];
-                }
-            }
-
             UpdatePreviousPosition();
         }
 
         public override void OnLink(IDataLinker linker)
         {
             transform = linker.LinkObject("transform", transform);
-
-            List<CharacterColumn> columns = new List<CharacterColumn>();
-            for(int x = 0; x < coordinates.GetLength(0); x++)
-            {
-                CharacterColumn column = new CharacterColumn();
-                columns.Add(column);
-                column.characters = coordinates[x].ToList();
-            }
-
-            columns = linker.LinkObjectList("columns", columns);
+            printPosition = linker.LinkObject("printPosition", printPosition);
+            // mapCharacters = linker.LinkObject("mapCharacters", mapCharacters);
         }
 
         public override void OnTick(double deltaTime)

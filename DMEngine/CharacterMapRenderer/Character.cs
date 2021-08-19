@@ -15,8 +15,6 @@ namespace DMEngine.CharacterMapRenderer
 
         static Dictionary<string, ConsoleColor> colorStringPair = new Dictionary<string, ConsoleColor>();
 
-
-
         public Character()
         {
             this.color = "White";
@@ -79,6 +77,16 @@ namespace DMEngine.CharacterMapRenderer
         {
             character = linker.LinkString("character", character.ToString())[0];
             color = linker.LinkString("color", color);
+        }
+
+        public virtual bool Equals(Character other)
+        {
+            if(other.character != character || other.color != color)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

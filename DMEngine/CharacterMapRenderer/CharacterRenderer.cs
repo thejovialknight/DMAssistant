@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DMEngine.Database;
-using DMEngine.Transform;
+using DMEngine.CharacterTransform;
 
 namespace DMEngine.CharacterMapRenderer
 {
@@ -14,42 +14,25 @@ namespace DMEngine.CharacterMapRenderer
 
         public void UpdateMap(CharacterMap map)
         {
-            // If the map has moved
-            if (map.isSizeOrPositionDifferent)
+            // Print all the characters, but only if they are actually different
+            foreach (MapCharacter mapCharacter in map.mapCharacters)
             {
-                RenderMap(map);
-                return;
-            }
-
-            // Print only character differences
-            foreach (CharacterDifference difference in map.differences)
-            {
-                Print(difference.newCharacter, difference.position);
-            }
-        }
-
-        // Render object and all children regardless of differences.
-        public void RenderMap(CharacterMap map)
-        {
-            map.ClearDifferences();
-            map.isSizeOrPositionDifferent = false;
-
-            // Print every character in the map.
-            for (int x = 0; x < map.coordinates.GetLength(0); x++)
-            {
-                for (int y = 0; y < map.coordinates[x].Length; y++)
+                if(mapCharacter.oldCharacter != mapCharacter.newCharacter)
                 {
-                    Vector2 position = new Vector2(x, y);
-                    Print(map.coordinates[x][y], position);
+                    Print(mapCharacter.newCharacter, mapCharacter.position + map.transform.rect.position);
+                    mapCharacter.oldCharacter = mapCharacter.newCharacter;
                 }
             }
+
+            map.ClearDifferences();
         }
 
         public void Print(Character character, Vector2 position)
         {
             if(character == null)
             {
-                character = new Character(' ', "White");
+                return;
+                //character = new Character(' ', "White");
             }
 
             // Check if outside the bounds of the console buffer
@@ -63,20 +46,15 @@ namespace DMEngine.CharacterMapRenderer
             Console.SetCursorPosition(position.x, position.y);
             Console.ForegroundColor = character.Color();
             Console.Write(character.character);
+
+            Console.SetCursorPosition(0, 21);
+            Console.WriteLine("x: " + position.x + " / y: " + position.y + " printed character: " + character.character + "        ");
         }
 
         public override void OnInitialize()
         {
             game.onEntityCreated += TryRegisterMap;
             game.onEntityDestroyed += TryRemoveMap;
-        }
-
-        public override void OnPostInitialize()
-        {
-            foreach(CharacterMap map in maps)
-            {
-                //RenderMap(map);
-            }
         }
 
         public override void OnTick(double deltaTime)

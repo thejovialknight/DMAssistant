@@ -22,6 +22,8 @@ namespace DungeonAssistant
 
         public override void OnInitialize()
         {
+            Console.CursorVisible = false;
+
             // Initialized first. Perhaps try to make this not necessary. 
             renderer = AddGraph<CharacterRenderer>();
             input = AddGraph<InputSystem>();

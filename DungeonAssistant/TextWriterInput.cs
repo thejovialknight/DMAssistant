@@ -9,19 +9,29 @@ using System.Threading.Tasks;
 
 namespace DungeonAssistant
 {
-    class 
-        TextWriterInput : Component
+    class TextWriterInput : Component
     {
         InputAcceptor inputAcceptor;
+        MapTextWriter mapTextWriter;
+
+        public TextWriterInput()
+        {
+
+        }
+
+        public TextWriterInput(InputAcceptor inputAcceptor, MapTextWriter mapTextWriter)
+        {
+            this.inputAcceptor = inputAcceptor;
+            this.mapTextWriter = mapTextWriter;
+        }
 
         public void OnKey(ConsoleKeyInfo key)
         {
-            Console.WriteLine("Funky keys activated!");
+            mapTextWriter.Write(key.KeyChar);
         }
 
         public override void OnInitialize()
         {
-            inputAcceptor = entity.Component<InputAcceptor>();
             inputAcceptor.onKey += OnKey;
         }
     }

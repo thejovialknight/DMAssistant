@@ -5,23 +5,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMEngine.Transform
+namespace DMEngine.CharacterTransform
 {
     public class RectTransform : Component
     {
-        public Rect rect = new Rect();
+        Rect rect = new Rect();
         public List<RectTransform> children = new List<RectTransform>();
-        public RectTransform parent;
+        public RectTransform parent = null;
 
         public RectTransform()
         {
 
         }
 
+        public RectTransform(Rect rect)
+        {
+            this.rect = rect;
+        }
+
         public RectTransform(Rect rect, RectTransform parent)
         {
             this.rect = rect;
             this.parent = parent;
+        }
+
+        public Vector2 Size()
+        {
+            return rect.size;
+        }
+
+        public Vector2 LocalPosition()
+        {
+            return rect.position;
         }
 
         public Vector2 GlobalPosition()

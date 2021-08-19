@@ -5,12 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMEngine.Transform
+namespace DMEngine.CharacterTransform
 {
     public class Vector2 : IDataLinkable
     {
         public int x = 0;
         public int y = 0;
+
+        public static Vector2 Zero { get { return new Vector2(0, 0); } }
 
         public Vector2()
         {

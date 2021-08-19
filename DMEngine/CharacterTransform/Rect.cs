@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMEngine.Transform
+namespace DMEngine.CharacterTransform
 {
     public class Rect : IDataLinkable
     {
@@ -21,6 +21,12 @@ namespace DMEngine.Transform
         {
             this.position = position;
             this.size = size;
+        }
+
+        public Rect(int xPos, int yPos, int xSize, int ySize)
+        {
+            position = new Vector2(xPos, yPos);
+            size = new Vector2(xSize, ySize);
         }
 
         public void Link(IDataLinker linker)
